@@ -1,8 +1,9 @@
 // src/components/Navbar.jsx
 import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { Menu, X, UserCircle } from "lucide-react";
 import Button from "./Button";
+import { useAuth } from "../context/AuthContext";
 
 const NAV_LINKS = [
   { label: "AI Planner", to: "/planner" },
@@ -30,6 +31,7 @@ const LOGO_SRC = "logo.jpg";
 const Navbar = ({ transparent = false }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const { isAuthenticated, user } = useAuth();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -81,7 +83,17 @@ const Navbar = ({ transparent = false }) => {
         </nav>
 
         {/* CTA */}
-        <div className="hidden md:block">
+        <div className="hidden items-center gap-4 md:flex">
+          {isAuthenticated ? (
+            <NavLink to="/profile" className="nav-link flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-[#0F3D4D]">
+              <UserCircle className="h-4 w-4" />
+              {user?.name}
+            </NavLink>
+          ) : (
+            <NavLink to="/login" className="nav-link px-3 py-2 text-sm font-medium text-[#0F3D4D] hover:text-[#0F3D4D]">
+              Log In
+            </NavLink>
+          )}
           <Button to="/planner" variant={isLight ? "gold" : "primary"} size="sm">
             Craft My Journey
           </Button>
@@ -121,6 +133,23 @@ const Navbar = ({ transparent = false }) => {
                 {link.label}
               </NavLink>
             ))}
+            {isAuthenticated ? (
+              <NavLink
+                to="/profile"
+                onClick={() => setMobileOpen(false)}
+                className="nav-link flex items-center gap-2 rounded-lg px-3 py-2 text-base font-medium text-[#0F3D4D]"
+              >
+                <UserCircle className="h-4 w-4" /> {user?.name}
+              </NavLink>
+            ) : (
+              <NavLink
+                to="/login"
+                onClick={() => setMobileOpen(false)}
+                className="nav-link rounded-lg px-3 py-2 text-base font-medium text-[#0F3D4D]"
+              >
+                Log In
+              </NavLink>
+            )}
             <Button to="/planner" variant="primary" size="sm" className="mt-2 w-full">
               Craft My Journey
             </Button>

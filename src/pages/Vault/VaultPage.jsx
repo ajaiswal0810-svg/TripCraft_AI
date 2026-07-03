@@ -5,14 +5,14 @@ import vaultMock, { getJournalBySlug } from "../../data/vaultMock";
 
 const STAT_ICON = {
   journeysCrafted: Compass,
-  countriesVisited: Globe,
+  citiesVisited: Globe,
   photosCurated: Camera,
   memoriesWritten: BookOpen,
 };
 
 const STAT_LABEL = {
   journeysCrafted: "Journeys Crafted",
-  countriesVisited: "Countries Visited",
+  citiesVisited: "Cities Visited",
   photosCurated: "Photos Curated",
   memoriesWritten: "Memories Written",
 };

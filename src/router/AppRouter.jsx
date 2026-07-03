@@ -9,6 +9,10 @@ import AIThinkingPage from "../pages/AIThinking/AIThinkingPage";
 import ItineraryPage from "../pages/Itinerary/ItineraryPage";
 import DashboardPage from "../pages/Dashboard/DashboardPage";
 import VaultPage from "../pages/Vault/VaultPage";
+import LoginPage from "../pages/Auth/LoginPage";
+import SignupPage from "../pages/Auth/SignupPage";
+import ProfilePage from "../pages/Profile/ProfilePage";
+import ProtectedRoute from "../components/ProtectedRoute";
 
 /**
  * ChromeLayout
@@ -57,6 +61,9 @@ const BareLayout = () => (
  *  /dashboard           → Trip readiness dashboard (budget, packing, weather)
  *  /vault               → Vault of past journeys / digital journals
  *  /vault/:tripSlug     → A single journal entry
+ *  /login               → Log in
+ *  /signup              → Create an account
+ *  /profile             → Logged-in user's profile (protected)
  *  *                    → redirect home
  */
 const AppRouter = () => {
@@ -70,6 +77,16 @@ const AppRouter = () => {
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/vault" element={<VaultPage />} />
         <Route path="/vault/:tripSlug" element={<VaultPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
       </Route>
 
       <Route element={<BareLayout />}>
