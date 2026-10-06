@@ -65,7 +65,7 @@ const QuestionCard = ({ question, value, onChange }) => {
   const { type, heading, subheading } = question;
 
   return (
-    <div className="w-full animate-[planner-card-rise_1.1s_var(--ease-out-soft)_both]">
+    <div className="planner-question w-full animate-[planner-card-rise_0.65s_var(--ease-out-soft)_both]">
       <h2 className="animate-[planner-heading-in_0.95s_var(--ease-out-soft)_both] text-2xl font-bold text-[#0F3D4D] sm:text-3xl">
         {heading}
       </h2>
@@ -93,7 +93,7 @@ const QuestionCard = ({ question, value, onChange }) => {
 };
 
 const SearchQuestion = ({ question, value, onChange }) => (
-  <SearchQuestionAnimated question={question} value={value} onChange={onChange} />
+  <SearchQuestionAnimated key={question.id} question={question} value={value} onChange={onChange} />
 );
 
 const SearchQuestionAnimated = ({ question, value, onChange }) => {
@@ -101,8 +101,6 @@ const SearchQuestionAnimated = ({ question, value, onChange }) => {
 
   useEffect(() => {
     const text = question.placeholder || "";
-    setTypedPlaceholder("");
-
     if (!text) return undefined;
 
     let index = 0;
@@ -118,13 +116,13 @@ const SearchQuestionAnimated = ({ question, value, onChange }) => {
   return (
     <div className="space-y-5">
       <div className="origin-left animate-[search-expand_1.05s_var(--ease-out-soft)_both]">
-        <div className="flex items-center gap-2 rounded-full border border-[#0F3D4D]/15 bg-white px-4 py-3 shadow-sm shadow-[#0F3D4D]/5">
+        <div className="planner-search-field flex items-center gap-2 rounded-full px-4 py-3">
       <Sparkles className="h-4 w-4 shrink-0 text-[#E8A23D]" />
       <input
         type="text"
         value={value || ""}
         onChange={(e) => onChange(e.target.value)}
-        placeholder={value ? question.placeholder : typedPlaceholder || question.placeholder}
+        placeholder={value ? question.placeholder : typedPlaceholder}
         className="min-w-0 flex-1 bg-transparent text-sm text-[#0F3D4D] placeholder:text-[#0F3D4D]/40 focus:outline-none"
       />
         </div>
@@ -144,8 +142,8 @@ const SearchQuestionAnimated = ({ question, value, onChange }) => {
               style={{ animationDelay: `${question.trendingSuggestions.indexOf(s) * 140 + 240}ms` }}
               className={`animate-[chip-rise_0.8s_var(--ease-out-soft)_both] rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
                 value === s
-                  ? "border-[#0F3D4D] bg-[#0F3D4D] text-white"
-                  : "border-[#0F3D4D]/15 text-[#0F3D4D]/80 hover:border-[#0F3D4D]"
+                  ? "planner-chip--active"
+                  : "planner-chip"
               }`}
             >
               {s}
@@ -189,10 +187,10 @@ const SingleSelectQuestion = ({ question, value, onChange }) => (
           key={option.value}
           type="button"
           onClick={() => onChange(option.value)}
-          className={`flex items-start gap-3 rounded-2xl border p-4 text-left transition-colors ${
+          className={`planner-option flex items-start gap-3 rounded-2xl p-4 text-left ${
             isActive
-              ? "border-[#0F3D4D] bg-[#0F3D4D] text-white"
-              : "border-[#0F3D4D]/15 bg-white text-[#0F3D4D] hover:border-[#0F3D4D]/40"
+              ? "planner-option--active"
+              : "text-[#0F3D4D]"
           }`}
         >
           {option.icon && (
@@ -240,10 +238,10 @@ const MultiSelectQuestion = ({ question, value, onChange }) => {
             key={option.value}
             type="button"
             onClick={() => toggle(option.value)}
-            className={`flex items-center gap-2 rounded-full border px-4 py-2.5 text-sm font-medium transition-colors ${
-              isActive
-                ? "border-[#0F3D4D] bg-[#0F3D4D] text-white"
-                : "border-[#0F3D4D]/15 bg-white text-[#0F3D4D]/80 hover:border-[#0F3D4D]/40"
+          className={`planner-chip flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium ${
+            isActive
+                ? "planner-chip--active"
+                : "text-[#0F3D4D]/80"
             }`}
           >
             {option.icon && (
@@ -292,7 +290,7 @@ const DateRangeQuestion = ({ value, onChange }) => {
           type="date"
           value={range.start}
           onChange={(e) => onChange({ ...range, start: e.target.value })}
-          className="w-full rounded-xl border border-[#0F3D4D]/15 bg-white px-4 py-3 text-sm text-[#0F3D4D] focus:border-[#0F3D4D] focus:outline-none"
+          className="planner-date-input w-full rounded-xl px-4 py-3 text-sm text-[#0F3D4D] focus:outline-none"
         />
       </label>
       <label className="block">
@@ -303,7 +301,7 @@ const DateRangeQuestion = ({ value, onChange }) => {
           type="date"
           value={range.end}
           onChange={(e) => onChange({ ...range, end: e.target.value })}
-          className="w-full rounded-xl border border-[#0F3D4D]/15 bg-white px-4 py-3 text-sm text-[#0F3D4D] focus:border-[#0F3D4D] focus:outline-none"
+          className="planner-date-input w-full rounded-xl px-4 py-3 text-sm text-[#0F3D4D] focus:outline-none"
         />
       </label>
     </div>

@@ -1,6 +1,6 @@
 // src/pages/Landing/FAQ.jsx
-import { useState } from "react";
-import { Plus, Minus, MessageCircle } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { Plus, Minus, MessageCircle, ArrowRight } from "lucide-react";
 import Button from "../../components/Button";
 
 const FAQ_ITEMS = [
@@ -24,66 +24,154 @@ const FAQ_ITEMS = [
   },
 ];
 
-/**
- * FAQ
- *
- * "Inquiries" accordion followed by the closing dark CTA band —
- * "Your next story is waiting."
- */
+/* ── Reveal hook ───────────────────────────────────────────────────────── */
+function useReveal(threshold = 0.2) {
+  const [visible, setVisible] = useState(false);
+  const ref = useRef(null);
+  useEffect(() => {
+    const obs = new IntersectionObserver(
+      ([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect(); } },
+      { threshold }
+    );
+    if (ref.current) obs.observe(ref.current);
+    return () => obs.disconnect();
+  }, [threshold]);
+  return [visible, ref];
+}
+
 const FAQ = () => {
   const [openId, setOpenId] = useState(FAQ_ITEMS[0].id);
+  const [faqVisible, faqRef] = useReveal();
+  const [ctaVisible, ctaRef] = useReveal(0.3);
 
   return (
     <>
-      <section className="mx-auto max-w-3xl px-6 py-20">
-        <h2 className="text-center text-3xl font-bold text-[#0F3D4D] sm:text-4xl">Inquiries</h2>
+      <section
+        ref={faqRef}
+        className="relative py-28"
+        style={{
+          background: "linear-gradient(180deg, #051116 0%, #071c24 100%)",
+        }}
+      >
+        <div className="mx-auto max-w-3xl px-6">
+          <div
+            className="text-center"
+            style={{
+              opacity: faqVisible ? 1 : 0,
+              transform: faqVisible ? "none" : "translateY(24px)",
+              transition: "opacity 0.7s ease, transform 0.7s ease",
+            }}
+          >
+            <h2 className="text-3xl font-bold text-white sm:text-5xl font-display">Inquiries</h2>
+            <p className="mt-4 text-sm text-white/50 uppercase tracking-widest font-semibold">Common questions</p>
+          </div>
 
-        <div className="mt-10 divide-y divide-[#0F3D4D]/10 border-y border-[#0F3D4D]/10">
-          {FAQ_ITEMS.map((item) => {
-            const isOpen = openId === item.id;
-            return (
-              <div key={item.id}>
-                <button
-                  onClick={() => setOpenId(isOpen ? null : item.id)}
-                  className="flex w-full items-center justify-between py-5 text-left"
-                  aria-expanded={isOpen}
+          <div
+            className="mt-14 space-y-4"
+            style={{
+              opacity: faqVisible ? 1 : 0,
+              transform: faqVisible ? "none" : "translateY(24px)",
+              transition: "opacity 0.7s ease 0.15s, transform 0.7s ease 0.15s",
+            }}
+          >
+            {FAQ_ITEMS.map((item) => {
+              const isOpen = openId === item.id;
+              return (
+                <div
+                  key={item.id}
+                  className="rounded-2xl transition-all duration-500 overflow-hidden"
+                  style={{
+                    background: isOpen ? "rgba(255,255,255,0.04)" : "transparent",
+                    border: isOpen ? "1px solid rgba(232,162,61,0.2)" : "1px solid rgba(255,255,255,0.08)",
+                  }}
                 >
-                  <span className="text-base font-medium text-[#0F3D4D]">{item.question}</span>
-                  {isOpen ? (
-                    <Minus className="h-4 w-4 shrink-0 text-[#0F3D4D]/60" />
-                  ) : (
-                    <Plus className="h-4 w-4 shrink-0 text-[#0F3D4D]/60" />
-                  )}
-                </button>
-                {isOpen && (
-                  <p className="pb-5 pr-8 text-sm leading-relaxed text-[#0F3D4D]/65">{item.answer}</p>
-                )}
-              </div>
-            );
-          })}
+                  <button
+                    onClick={() => setOpenId(isOpen ? null : item.id)}
+                    className="flex w-full items-center justify-between px-6 py-5 text-left group"
+                    aria-expanded={isOpen}
+                  >
+                    <span
+                      className="text-base font-medium transition-colors duration-300"
+                      style={{ color: isOpen ? "#E8A23D" : "rgba(255,255,255,0.85)" }}
+                    >
+                      {item.question}
+                    </span>
+                    <div
+                      className="flex h-8 w-8 items-center justify-center rounded-full transition-all duration-300"
+                      style={{
+                        background: isOpen ? "rgba(232,162,61,0.15)" : "rgba(255,255,255,0.05)",
+                      }}
+                    >
+                      {isOpen ? (
+                        <Minus className="h-4 w-4 text-[#E8A23D]" />
+                      ) : (
+                        <Plus className="h-4 w-4 text-white/50 group-hover:text-white" />
+                      )}
+                    </div>
+                  </button>
+                  <div
+                    className="overflow-hidden transition-all duration-500"
+                    style={{
+                      maxHeight: isOpen ? 200 : 0,
+                      opacity: isOpen ? 1 : 0,
+                    }}
+                  >
+                    <p className="px-6 pb-6 text-sm leading-relaxed text-white/60">
+                      {item.answer}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </section>
 
-      {/* Closing CTA band */}
-      <section className="bg-[#0B2E3A] px-6 py-20 text-center">
-        <h2 className="text-3xl font-bold text-[#FDF6EE] sm:text-4xl">Your next story is waiting.</h2>
-        <p className="mx-auto mt-3 max-w-md text-sm text-white/70 sm:text-base">
-          Experience travel that transcends the map. Join the elite group of explorers who have traded
-          stress for serendipity.
-        </p>
+      {/* ── Closing CTA band ─────────────────────────────────────── */}
+      <section
+        ref={ctaRef}
+        className="closing-cta relative overflow-hidden py-20 text-center sm:py-24"
+      >
+        <div
+          className="closing-cta-content relative mx-auto w-full max-w-2xl px-6"
+          style={{
+            opacity: ctaVisible ? 1 : 0,
+            transform: ctaVisible ? "scale(1)" : "scale(0.95)",
+            transition: "opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1)",
+          }}
+        >
+          <h2 className="text-balance text-4xl font-bold text-white sm:text-6xl font-display tracking-tight leading-[1.06]">
+            Your next story is waiting.
+          </h2>
+          <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-white/65">
+            Experience travel that transcends the map. Join the elite group of explorers who have traded stress for serendipity.
+          </p>
 
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-          <Button to="/planner" variant="accent" size="lg">
-            Begin My Journey
-          </Button>
-          <Button href="mailto:concierge@tripcraft.ai" variant="outlineLight" size="lg" icon={MessageCircle}>
-            Speak with Concierge
-          </Button>
+          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <Button
+              to="/planner"
+              size="lg"
+              className="closing-cta-primary w-full sm:w-auto"
+              style={{
+                background: "#E2572B",
+                border: "none",
+                boxShadow: "0 8px 20px rgba(226,87,43,0.22)",
+                color: "white"
+              }}
+            >
+              Begin My Journey <ArrowRight className="h-4 w-4 ml-1" />
+            </Button>
+            <Button
+              href="mailto:concierge@tripcraft.ai"
+              variant="outlineLight"
+              size="lg"
+              className="closing-cta-secondary w-full sm:w-auto"
+              icon={MessageCircle}
+            >
+              Speak with Concierge
+            </Button>
+          </div>
         </div>
-
-        <p className="mt-10 text-[11px] uppercase tracking-widest text-white/40">
-          Crafting beyond the ordinary since 2024
-        </p>
       </section>
     </>
   );

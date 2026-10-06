@@ -24,6 +24,7 @@ const ProgressBar = ({
   label,
   showPercent = false,
   tone = "dark",
+  stepLabels = [],
 }) => {
   const isSegmented = Boolean(steps);
 
@@ -33,7 +34,7 @@ const ProgressBar = ({
 
   if (isSegmented) {
     return (
-      <div className="w-full">
+      <div className="planner-stepper w-full" role="progressbar" aria-valuenow={currentStep} aria-valuemin={1} aria-valuemax={steps}>
         {label && (
           <div className={`mb-2 flex items-center justify-between text-xs font-medium ${labelColor}`}>
             <span>{label}</span>
@@ -42,14 +43,27 @@ const ProgressBar = ({
             </span>
           </div>
         )}
-        <div className="flex gap-1.5">
+        <div className="planner-stepper-track relative flex items-start justify-between">
           {Array.from({ length: steps }).map((_, i) => (
             <div
               key={i}
-              className={`h-1.5 flex-1 rounded-full transition-colors duration-300 ${
-                i < currentStep ? fillColor : trackColor
-              }`}
-            />
+              className="relative z-10 flex flex-1 flex-col items-center last:flex-none"
+            >
+              <span
+                className={`flex h-7 w-7 items-center justify-center rounded-full border text-[10px] font-bold transition-all duration-500 ${
+                  i < currentStep
+                    ? "border-[#E2572B] bg-[#E2572B] text-white shadow-[0_4px_12px_rgba(226,87,43,0.22)]"
+                    : "border-[#0F3D4D]/15 bg-[#FDF6EE] text-[#0F3D4D]/40"
+                }`}
+              >
+                {i + 1}
+              </span>
+              {stepLabels[i] && (
+                <span className={`mt-2 hidden whitespace-nowrap text-[9px] font-semibold uppercase tracking-[0.1em] sm:block ${i < currentStep ? "text-[#0F3D4D]/70" : "text-[#0F3D4D]/35"}`}>
+                  {stepLabels[i]}
+                </span>
+              )}
+            </div>
           ))}
         </div>
       </div>

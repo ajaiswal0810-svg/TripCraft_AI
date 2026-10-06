@@ -45,23 +45,23 @@ const Navbar = ({ transparent = false }) => {
   const linkClass = ({ isActive }) =>
     `nav-link px-3 py-2 text-sm font-medium transition-colors duration-300 ${
       isActive
-        ? "active text-[#0F3D4D]"
-        : "text-[#0F3D4D] hover:text-[#0F3D4D]"
+        ? isLight ? "active text-white" : "active text-[#0F3D4D]"
+        : isLight ? "text-white/85 hover:text-white" : "text-[#0F3D4D] hover:text-[#0F3D4D]"
     }`;
 
   return (
     <header
-      className={`navbar-glass relative sticky top-0 z-50 w-full transition-all duration-500 ${
+       className={`navbar-glass navbar-luxe relative sticky top-0 z-50 w-full transition-all duration-500 ${
         isLight ? "navbar-glass-dark" : "navbar-glass-light"
       } ${scrolled ? "shadow-[0_8px_32px_rgba(15,61,77,0.12)]" : ""}`}
     >
       {/* Drifting gradient glow */}
       <div className="navbar-gradient-glow pointer-events-none absolute inset-0 -z-10" aria-hidden="true" />
 
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3">
+      <div className="relative mx-auto flex max-w-7xl items-center justify-between px-6 py-3">
         {/* Logo */}
         <NavLink to="/" className="group flex items-center gap-2.5">
-          <span className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl transition-transform duration-300 ease-[var(--ease-out-soft)] group-hover:scale-110 group-hover:rotate-3">
+          <span className="navbar-logo-mark flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl transition-transform duration-300 ease-[var(--ease-out-soft)] group-hover:scale-110 group-hover:rotate-3">
             <img src={LOGO_SRC} alt="TripCraft" className="h-full w-full object-contain" />
           </span>
           <span
@@ -74,7 +74,7 @@ const Navbar = ({ transparent = false }) => {
         </NavLink>
 
         {/* Desktop nav */}
-        <nav className="hidden items-center gap-1 md:flex">
+        <nav aria-label="Primary navigation" className="navbar-links hidden items-center gap-1 md:flex">
           {NAV_LINKS.map((link) => (
             <NavLink key={link.to} to={link.to} className={linkClass}>
               {link.label}
@@ -85,23 +85,23 @@ const Navbar = ({ transparent = false }) => {
         {/* CTA */}
         <div className="hidden items-center gap-4 md:flex">
           {isAuthenticated ? (
-            <NavLink to="/profile" className="nav-link flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-[#0F3D4D]">
+            <NavLink to="/profile" className={`navbar-account nav-link flex items-center gap-1.5 px-3 py-2 text-sm font-medium ${isLight ? "text-white/85 hover:text-white" : "text-[#0F3D4D]"}`}>
               <UserCircle className="h-4 w-4" />
               {user?.name}
             </NavLink>
           ) : (
-            <NavLink to="/login" className="nav-link px-3 py-2 text-sm font-medium text-[#0F3D4D] hover:text-[#0F3D4D]">
+            <NavLink to="/login" className={`navbar-account nav-link px-3 py-2 text-sm font-medium ${isLight ? "text-white/85 hover:text-white" : "text-[#0F3D4D] hover:text-[#0F3D4D]"}`}>
               Log In
             </NavLink>
           )}
-          <Button to="/planner" variant={isLight ? "gold" : "primary"} size="sm">
+          <Button to="/planner" variant={isLight ? "gold" : "primary"} size="sm" className="navbar-cta">
             Craft My Journey
           </Button>
         </div>
 
         {/* Mobile toggle */}
         <button
-          className={`md:hidden transition-colors duration-300 ${isLight ? "text-[#FDF6EE]" : "text-[#0F3D4D]"}`}
+          className={`navbar-menu-toggle flex h-10 w-10 items-center justify-center rounded-xl md:hidden transition-colors duration-300 ${isLight ? "text-[#FDF6EE]" : "text-[#0F3D4D]"}`}
           onClick={() => setMobileOpen((v) => !v)}
           aria-label={mobileOpen ? "Close menu" : "Open menu"}
           aria-expanded={mobileOpen}
@@ -117,7 +117,7 @@ const Navbar = ({ transparent = false }) => {
         }`}
       >
         <div className="min-h-0">
-          <nav className="navbar-glass-light flex flex-col gap-1 border-t border-white/20 px-6 py-4">
+          <nav aria-label="Mobile navigation" className="navbar-mobile-panel flex flex-col gap-1 border-t border-white/20 px-6 py-4">
             {NAV_LINKS.map((link, i) => (
               <NavLink
                 key={link.to}
@@ -150,7 +150,7 @@ const Navbar = ({ transparent = false }) => {
                 Log In
               </NavLink>
             )}
-            <Button to="/planner" variant="primary" size="sm" className="mt-2 w-full">
+            <Button to="/planner" variant="primary" size="sm" className="navbar-cta mt-2 w-full">
               Craft My Journey
             </Button>
           </nav>

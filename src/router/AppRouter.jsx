@@ -28,7 +28,7 @@ const ChromeLayout = () => {
   return (
     <div className="flex min-h-screen flex-col bg-[#FDF6EE]">
       <Navbar transparent={isLanding} />
-      <main className="flex-1">
+      <main className={`flex-1 ${isLanding ? "-mt-[68px]" : ""}`}>
         <Outlet />
       </main>
       <Footer />
